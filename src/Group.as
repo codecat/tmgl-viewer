@@ -60,7 +60,13 @@ class Group
 
 		//NOTE: More testing data
 		for (uint i = 0; i < m_players.Length; i++) {
-			m_players[i].m_score = Math::Rand(0, 40);
+			if (m_status != GroupStatus::Warmup) {
+				m_players[i].m_score = Math::Rand(0, 3);
+			}
+		}
+		if (m_status == GroupStatus::Completed) {
+			int winningPlayer = Math::Rand(0, m_players.Length);
+			m_players[winningPlayer].m_score = 3;
 		}
 		m_players.SortDesc();
 	}
@@ -74,6 +80,7 @@ class Group
 		switch (m_status) {
 			case GroupStatus::Warmup: headerText = "\\$e82" + Icons::CircleO + "\\$z " + headerText; break;
 			case GroupStatus::Live: headerText = "\\$e22" + Icons::Circle + "\\$z " + headerText; break;
+			case GroupStatus::Completed: headerText = "\\$6f6" + Icons::CheckCircle + "\\$z " + headerText; break;
 		}
 		UI::PushFont(g_fontHeader20);
 		UI::Text(headerText);
@@ -81,7 +88,7 @@ class Group
 
 		// Players
 		for (uint i = 0; i < m_players.Length; i++) {
-			m_players[i].Render(i + 1);
+			m_players[i].Render(i + 1, m_status == GroupStatus::Completed);
 		}
 
 		// Join button

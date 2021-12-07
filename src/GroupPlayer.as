@@ -7,6 +7,7 @@ class GroupPlayer
 	string m_accountId; // Will this be available?
 	string m_displayName; // Will we have to query this?
 	string m_teamTag;
+	int m_position = 0; // Will this be available?
 	int m_score = 0;
 
 	GroupPlayer(const string &in displayName, const string &in teamTag)

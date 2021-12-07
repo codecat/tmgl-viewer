@@ -64,11 +64,12 @@ class Group
 				m_players[i].m_score = Math::Rand(0, 3);
 			}
 		}
-		if (m_status == GroupStatus::Completed) {
-			int winningPlayer = Math::Rand(0, m_players.Length);
-			m_players[winningPlayer].m_score = 3;
-		}
 		m_players.SortDesc();
+		if (m_status == GroupStatus::Completed) {
+			m_players[0].m_score = 3;
+			m_players[1].m_score = 3;
+			m_players[2].m_score = 3;
+		}
 	}
 
 	void Render()

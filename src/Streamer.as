@@ -15,7 +15,7 @@ class Streamer
 		if (fullwidth) {
 			columnWidth = UI::GetContentRegionAvail().x;
 		}
-		if (UI::ColoredButton(Icons::Twitch + " Watch " + m_name, 0.8f, 0.6f, 0.6f, vec2(columnWidth, 0))) {
+		if (UI::ColoredButton(Icons::Twitch + " " + m_name, 0.8f, 0.6f, 0.6f, vec2(columnWidth, 0))) {
 			OpenBrowserURL(m_url);
 		}
 	}

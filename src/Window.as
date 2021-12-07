@@ -5,6 +5,9 @@ class Window
 	array<Group@> m_groups;
 	array<Streamer@> m_mainStreams;
 
+	string m_mapUid; // Will we have this info from the API? We can link to Trackmania.io then
+	string m_mapName;
+
 	Window()
 	{
 		for (int i = 0; i < 4; i++) {
@@ -13,6 +16,8 @@ class Window
 
 		m_mainStreams.InsertLast(Streamer("Trackmania", "https://twitch.tv/trackmania"));
 		m_mainStreams.InsertLast(Streamer("Wirtual", "https://twitch.tv/wirtual"));
+
+		m_mapName = "POLEPARTY";
 	}
 
 	void Render()
@@ -25,13 +30,22 @@ class Window
 		if (UI::Begin("\\$e61" + Icons::Trophy + "\\$z TMGL Match Viewer", m_visible)) {
 			// Header
 			UI::PushFont(g_fontHeader26);
-			UI::Text("STEP 1 - ROUND 1");
-			UI::PopFont();
 
+			UI::Text("STEP 1 - ROUND 1");
+			UI::SameLine();
+
+			vec2 cursorPos = UI::GetCursorPos();
+			float spaceLeft = UI::GetContentRegionAvail().x;
+			vec2 textSize = Draw::MeasureString(m_mapName, g_fontHeader26);
+
+			UI::SetCursorPos(cursorPos + vec2(spaceLeft - textSize.x, 0));
+			UI::Text(m_mapName);
+
+			UI::PopFont();
 			UI::Separator();
 
+			// Groups
 			if (UI::BeginChild("Groups", vec2(0, -40), true)) {
-				// Groups
 				if (m_groups.Length > 0) {
 					UI::Columns(m_groups.Length, "Groups");
 					for (uint i = 0; i < m_groups.Length; i++) {

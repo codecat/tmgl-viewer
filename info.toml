@@ -1,0 +1,9 @@
+[meta]
+name = "TMGL Match Viewer"
+author = "Miss"
+category = "TMGL"
+
+[script]
+dependencies = [ "NadeoServices" ]
+imports = [ "Icons.as" ]
+timeout = 0

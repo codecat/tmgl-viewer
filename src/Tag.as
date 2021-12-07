@@ -36,10 +36,7 @@ namespace Controls
 	void Tag(const vec2 &in size, const string &in text, const vec4 &in color = TAG_COLOR)
 	{
 		vec2 textSize = Draw::MeasureString(text);
-		vec2 textOffset = vec2(
-			size.x / 2 - textSize.x / 2,
-			0
-		);
+		vec2 textOffset = vec2(size.x / 2 - textSize.x / 2, 0);
 		if (size.x != 0) { textSize.x = size.x; }
 		if (size.y != 0) { textSize.y = size.y; }
 		UI::Dummy(textSize + TAG_PADDING * 2);

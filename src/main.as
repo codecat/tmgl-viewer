@@ -5,8 +5,8 @@ Window g_window;
 
 void RenderMenu()
 {
-	if (UI::MenuItem("\\$e61" + Icons::Trophy + "\\$z TMGL Match Viewer", "", g_window.m_visible)) {
-		g_window.m_visible = !g_window.m_visible;
+	if (UI::MenuItem("\\$e61" + Icons::Trophy + "\\$z TMGL Match Viewer", "", Setting_Visible)) {
+		Setting_Visible = !Setting_Visible;
 	}
 }
 

@@ -1,7 +1,5 @@
 class Window
 {
-	bool m_visible = true;
-
 	array<Group@> m_groups;
 	array<Streamer@> m_mainStreams;
 
@@ -22,12 +20,12 @@ class Window
 
 	void Render()
 	{
-		if (!m_visible) {
+		if (!Setting_Visible) {
 			return;
 		}
 
 		UI::SetNextWindowSize(800, 370);
-		if (UI::Begin("\\$e61" + Icons::Trophy + "\\$z TMGL Match Viewer", m_visible)) {
+		if (UI::Begin("\\$e61" + Icons::Trophy + "\\$z TMGL Match Viewer", Setting_Visible)) {
 			// Header
 			UI::PushFont(g_fontHeader26);
 

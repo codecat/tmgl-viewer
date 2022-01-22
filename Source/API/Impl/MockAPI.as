@@ -558,9 +558,4 @@ class MockAPI : IAPI
 
 		return API::LiveRanking(js);
 	}
-
-	string GetMapNameAsync(const string &in uid)
-	{
-		return "Poleparty";
-	}
 }

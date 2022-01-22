@@ -5,5 +5,5 @@ category = "TMGL"
 
 [script]
 dependencies = [ "NadeoServices" ]
-imports = [ "Icons.as" ]
+imports = [ "Icons.as", "Formatting.as" ]
 timeout = 0

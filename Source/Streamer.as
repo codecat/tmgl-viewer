@@ -1,12 +1,12 @@
 class Streamer
 {
 	string m_name;
-	string m_url;
+	string m_link;
 
-	Streamer(const string &in name, const string &in url)
+	Streamer(const string &in name, const string &in link)
 	{
 		m_name = name;
-		m_url = url;
+		m_link = link;
 	}
 
 	void Render(bool fullwidth)
@@ -16,7 +16,7 @@ class Streamer
 			columnWidth = UI::GetContentRegionAvail().x;
 		}
 		if (UI::ColoredButton(Icons::Twitch + " " + m_name, 0.8f, 0.6f, 0.6f, vec2(columnWidth, 0))) {
-			OpenBrowserURL(m_url);
+			OpenBrowserURL(m_link);
 		}
 	}
 }

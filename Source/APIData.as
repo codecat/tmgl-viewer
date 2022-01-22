@@ -1,5 +1,7 @@
 class APIData
 {
+	bool m_success = false;
+
 	API::Competition@ m_competition;
 	API::CompetitionRound@ m_currentRound;
 	API::Match@[] m_matches;
@@ -10,6 +12,8 @@ class APIData
 
 	void Clear()
 	{
+		m_success = false;
+
 		@m_competition = null;
 		@m_currentRound = null;
 		m_matches.RemoveRange(0, m_matches.Length);
@@ -21,22 +25,44 @@ class APIData
 
 	void Refresh()
 	{
-		if (m_competition is null) {
-			LoadCompAsync();
-			return;
-		}
+		try {
+			if (m_competition is null) {
+				if (Setting_Verbose) {
+					trace("No competition yet, calling LoadCompAsync");
+				}
+				LoadCompAsync();
+				m_success = true;
+				return;
+			}
 
-		if (m_currentRound is null) {
-			LoadRoundsAsync();
-			return;
-		}
+			if (m_currentRound is null) {
+				if (Setting_Verbose) {
+					trace("No current round yet, calling LoadRoundsAsync");
+				}
+				LoadRoundsAsync();
+				m_success = true;
+				return;
+			}
 
-		if (m_matches.Length == 0) {
-			LoadMatchesAsync();
-			return;
-		}
+			if (m_matches.Length == 0) {
+				if (Setting_Verbose) {
+					trace("No matches yet, calling LoadMatchesAsync");
+				}
+				LoadMatchesAsync();
+				m_success = true;
+				return;
+			}
 
-		LoadRankingsAsync();
+			if (Setting_Verbose) {
+				trace("Ready, calling LoadRankingsAsync");
+			}
+			LoadRankingsAsync();
+			m_success = true;
+
+		} catch {
+			m_success = false;
+			error("Exception while loading data from API: " + getExceptionInfo());
+		}
 	}
 
 	void LoadCompAsync()

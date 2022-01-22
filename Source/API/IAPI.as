@@ -6,5 +6,4 @@ interface IAPI
 	API::Match@ GetMatchAsync(int matchId);
 	API::MatchParticipant@[] GetMatchParticipants(int matchId);
 	API::LiveRanking@ GetMatchLiveRanking(int matchId);
-	string GetMapNameAsync(const string &in uid);
 }

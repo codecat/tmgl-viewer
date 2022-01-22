@@ -13,6 +13,8 @@ namespace API
 		string m_serverStatus;
 		string m_status;
 
+		string[] m_mapUids;
+
 		Match(const Json::Value &in js)
 		{
 			m_id = js["id"];
@@ -32,6 +34,12 @@ namespace API
 			auto jsStatus = js["status"];
 			if (jsStatus.GetType() == Json::Type::String) {
 				m_status = jsStatus;
+			}
+
+			auto jsGameSettings = js["game_settings"];
+			auto jsMaps = jsGameSettings["maps"];
+			for (uint i = 0; i < jsMaps.Length; i++) {
+				m_mapUids.InsertLast(jsMaps[i]["ident"]);
 			}
 		}
 	}

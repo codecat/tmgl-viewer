@@ -5,10 +5,18 @@ class APIData
 	API::Match@[] m_matches;
 	API::LiveRanking@[] m_matchesRankings;
 
+	string m_matchesMapUid;
+	string m_matchesMapName;
+
 	void Clear()
 	{
 		@m_competition = null;
 		@m_currentRound = null;
+		m_matches.RemoveRange(0, m_matches.Length);
+		m_matchesRankings.RemoveRange(0, m_matchesRankings.Length);
+
+		m_matchesMapUid = "";
+		m_matchesMapName = "";
 	}
 
 	void Refresh()
@@ -86,7 +94,48 @@ class APIData
 
 		m_matches = res;
 
+		LoadMapInfoAsync();
+
 		LoadRankingsAsync();
+	}
+
+	void LoadMapInfoAsync()
+	{
+		string currentMapUid;
+
+		for (uint i = 0; i < m_matches.Length; i++) {
+			auto match = m_matches[i];
+			if (match.m_mapUids.Length != 1) {
+				error("Unexpected number of maps in match " + match.m_id + " (there are " + match.m_mapUids.Length + " maps)");
+				continue;
+			}
+
+			if (i == 0) {
+				currentMapUid = match.m_mapUids[0];
+			} else if (match.m_mapUids[0] != currentMapUid) {
+				warn("Inconsistent map UID's across matches (match " + match.m_id + " differs from match " + m_matches[0].m_id + ")");
+			}
+		}
+
+		if (currentMapUid == m_matchesMapUid) {
+			return;
+		}
+
+		m_matchesMapUid = currentMapUid;
+
+		auto app = cast<CGameManiaPlanet>(GetApp());
+		auto dataFileMgr = app.MenuManager.MenuCustom_CurrentManiaApp.DataFileMgr;
+		auto mapResult = dataFileMgr.Map_NadeoServices_GetFromUid(0, m_matchesMapUid);
+		while (mapResult.IsProcessing) {
+			yield();
+		}
+		if (mapResult.HasSucceeded) {
+			m_matchesMapName = mapResult.Map.Name;
+		} else {
+			error("Unable to get map name from UID " + m_matchesMapUid);
+			m_matchesMapName = "";
+		}
+		dataFileMgr.ReleaseTaskResult(mapResult.Id);
 	}
 
 	void LoadRankingsAsync()

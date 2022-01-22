@@ -1,7 +1,5 @@
 class Window
 {
-	APIData m_apiData;
-
 	bool m_refreshingClear = true;
 	bool m_refreshing = false;
 	int m_refreshTime = 10;
@@ -12,7 +10,6 @@ class Window
 	array<Streamer@> m_mainStreams;
 
 	string m_roundName;
-
 	string m_mapUid;
 	string m_mapName;
 
@@ -45,6 +42,17 @@ class Window
 		m_mapName = "";
 	}
 
+	void UpdateFromApiData(const APIData &in data)
+	{
+		m_compName = data.m_competition.m_name;
+
+		//
+
+		m_roundName = data.m_currentRound.m_name.ToUpper();
+		m_mapUid = data.m_matchesMapUid;
+		m_mapName = data.m_matchesMapName;
+	}
+
 	void LoopAsync()
 	{
 		// Wait until the window is visible
@@ -52,10 +60,13 @@ class Window
 			yield();
 		}
 
+		APIData data;
+
 		m_refreshing = true;
 		m_refreshingClear = true;
 
-		m_apiData.Refresh();
+		data.Refresh();
+		UpdateFromApiData(data);
 
 		m_refreshing = false;
 		m_refreshingClear = false;
@@ -69,7 +80,8 @@ class Window
 
 				m_refreshing = true;
 
-				m_apiData.Refresh();
+				data.Refresh();
+				UpdateFromApiData(data);
 
 				m_refreshing = false;
 				m_refreshTime = Setting_RefreshTime;

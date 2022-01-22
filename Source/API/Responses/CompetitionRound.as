@@ -4,8 +4,10 @@ namespace API
 	{
 		int m_id;
 		string m_name;
+
 		int64 m_startDate;
 		int64 m_endDate;
+
 		string m_status;
 		int m_matchCount;
 
@@ -13,6 +15,7 @@ namespace API
 		{
 			m_id = js["id"];
 			m_name = js["name"];
+
 			m_startDate = int64(double(js["start_date"]));
 			m_endDate = int64(double(js["end_date"]));
 

@@ -1,4 +1,4 @@
-const int MOCK_API_SLEEP_TIME = 250;
+const int MOCK_API_SLEEP_TIME = 50;
 
 class MockAPI : IAPI
 {
@@ -8,6 +8,8 @@ class MockAPI : IAPI
 			error("Unexpected mock competition ID: " + compId);
 			return null;
 		}
+
+		trace("GetCompetitionAsync");
 
 		sleep(MOCK_API_SLEEP_TIME);
 
@@ -47,6 +49,8 @@ class MockAPI : IAPI
 			error("Unexpected mock competition ID: " + compId);
 			return {};
 		}
+
+		trace("GetCompetitionRoundsAsync");
 
 		sleep(MOCK_API_SLEEP_TIME);
 
@@ -247,6 +251,8 @@ class MockAPI : IAPI
 			return {};
 		}
 
+		trace("GetRoundMatchesAsync");
+
 		sleep(MOCK_API_SLEEP_TIME);
 
 		auto js = Json::Parse("""{
@@ -280,14 +286,17 @@ class MockAPI : IAPI
 """);
 
 		API::RoundMatch@[] ret;
-		for (uint i = 0; i < js.Length; i++) {
-			ret.InsertLast(API::RoundMatch(js[i]));
+		auto jsMatches = js["matches"];
+		for (uint i = 0; i < jsMatches.Length; i++) {
+			ret.InsertLast(API::RoundMatch(jsMatches[i]));
 		}
 		return ret;
 	}
 
 	API::Match@ GetMatchAsync(int matchId)
 	{
+		trace("GetMatchAsync");
+
 		sleep(MOCK_API_SLEEP_TIME);
 
 		auto js = Json::Parse("""{
@@ -462,6 +471,8 @@ class MockAPI : IAPI
 
 	API::MatchParticipant@[] GetMatchParticipants(int matchId)
 	{
+		trace("GetMatchParticipants");
+
 		sleep(MOCK_API_SLEEP_TIME);
 
 		auto js = Json::Parse("""[
@@ -520,6 +531,8 @@ class MockAPI : IAPI
 
 	API::LiveRanking@ GetMatchLiveRanking(int matchId)
 	{
+		trace("GetMatchLiveRanking");
+
 		sleep(MOCK_API_SLEEP_TIME);
 
 		auto js = Json::Parse("""{

@@ -1,10 +1,49 @@
 class Window
 {
-	WindowData m_data;
+	APIData m_apiData;
 
 	bool m_refreshingClear = true;
 	bool m_refreshing = false;
 	int m_refreshTime = 10;
+
+	string m_compName;
+
+	array<Group@> m_groups;
+	array<Streamer@> m_mainStreams;
+
+	string m_roundName;
+
+	string m_mapUid;
+	string m_mapName;
+
+	/*
+	void LoadFakeInfo()
+	{
+		m_compName = "TMGL Show";
+
+		for (int i = 0; i < 4; i++) {
+			m_groups.InsertLast(Group(i + 1));
+		}
+
+		m_mainStreams.InsertLast(Streamer("Trackmania", "https://twitch.tv/trackmania"));
+		m_mainStreams.InsertLast(Streamer("Wirtual", "https://twitch.tv/wirtual"));
+
+		m_roundName = "STEP 1 - ROUND 1";
+		m_mapName = "POLEPARTY";
+	}
+	*/
+
+	void Clear()
+	{
+		m_compName = "";
+
+		m_groups.RemoveRange(0, m_groups.Length);
+		m_mainStreams.RemoveRange(0, m_mainStreams.Length);
+
+		m_roundName = "";
+		m_mapUid = "";
+		m_mapName = "";
+	}
 
 	void LoopAsync()
 	{
@@ -16,7 +55,7 @@ class Window
 		m_refreshing = true;
 		m_refreshingClear = true;
 
-		m_data.LoadCompAsync();
+		m_apiData.Refresh();
 
 		m_refreshing = false;
 		m_refreshingClear = false;
@@ -30,7 +69,7 @@ class Window
 
 				m_refreshing = true;
 
-				m_data.LoadRankingsAsync();
+				m_apiData.Refresh();
 
 				m_refreshing = false;
 				m_refreshTime = Setting_RefreshTime;
@@ -45,8 +84,8 @@ class Window
 		}
 
 		string title = "\\$e61" + Icons::Trophy + "\\$z TMGL Match Viewer";
-		if (!m_refreshingClear && m_data.m_compName != "") {
-			title += "\\$666 - " + m_data.m_compName;
+		if (!m_refreshingClear && m_compName != "") {
+			title += "\\$666 - " + m_compName;
 		}
 
 		UI::SetNextWindowSize(800, 370);
@@ -70,15 +109,15 @@ class Window
 		// Header
 		UI::PushFont(g_fontHeader26);
 
-		UI::Text(m_data.m_roundName);
+		UI::Text(m_roundName);
 		UI::SameLine();
 
 		vec2 cursorPos = UI::GetCursorPos();
 		float spaceLeft = UI::GetContentRegionAvail().x;
-		vec2 textSize = Draw::MeasureString(m_data.m_mapName, g_fontHeader26);
+		vec2 textSize = Draw::MeasureString(m_mapName, g_fontHeader26);
 
 		UI::SetCursorPos(cursorPos + vec2(spaceLeft - textSize.x, 0));
-		UI::Text(m_data.m_mapName);
+		UI::Text(m_mapName);
 		//TODO: Button to open Trackmania.io
 
 		UI::PopFont();
@@ -86,10 +125,10 @@ class Window
 
 		// Groups
 		if (UI::BeginChild("Groups", vec2(0, -40), true)) {
-			if (m_data.m_groups.Length > 0) {
-				UI::Columns(m_data.m_groups.Length, "Groups");
-				for (uint i = 0; i < m_data.m_groups.Length; i++) {
-					auto group = m_data.m_groups[i];
+			if (m_groups.Length > 0) {
+				UI::Columns(m_groups.Length, "Groups");
+				for (uint i = 0; i < m_groups.Length; i++) {
+					auto group = m_groups[i];
 					UI::PushID(group);
 					group.Render();
 					UI::PopID();
@@ -106,11 +145,11 @@ class Window
 		UI::AlignTextToFramePadding();
 		UI::Text("Main streams:");
 		UI::SameLine();
-		for (uint i = 0; i < m_data.m_mainStreams.Length; i++) {
+		for (uint i = 0; i < m_mainStreams.Length; i++) {
 			if (i > 0) {
 				UI::SameLine();
 			}
-			m_data.m_mainStreams[i].Render(false);
+			m_mainStreams[i].Render(false);
 		}
 
 		// Refresh indicator

@@ -3,6 +3,8 @@ Resources::Font@ g_fontHeader20;
 
 Window g_window;
 
+IAPI@ g_api;
+
 void RenderMenu()
 {
 	if (UI::MenuItem("\\$e61" + Icons::Trophy + "\\$z TMGL Match Viewer", "", Setting_Visible)) {
@@ -17,10 +19,13 @@ void RenderInterface()
 
 void Main()
 {
-	@g_fontHeader26 = Resources::GetFont("fonts/Montserrat-Bold.ttf", 26);
-	@g_fontHeader20 = Resources::GetFont("fonts/Montserrat-Bold.ttf", 20, -1, -1, true);
+	@g_fontHeader26 = Resources::GetFont("Fonts/Montserrat-Bold.ttf", 26);
+	@g_fontHeader20 = Resources::GetFont("Fonts/Montserrat-Bold.ttf", 20, -1, -1, true);
 
-	NadeoServices::AddAudience("NadeoClubServices");
+	Data::Load();
+
+	@g_api = MockAPI();
+	//NadeoServices::AddAudience("NadeoClubServices");
 
 	g_window.LoopAsync();
 }

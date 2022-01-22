@@ -1,3 +1,5 @@
+const int MOCK_API_SLEEP_TIME = 250;
+
 class MockAPI : IAPI
 {
 	API::Competition@ GetCompetitionAsync(int compId)
@@ -7,7 +9,7 @@ class MockAPI : IAPI
 			return null;
 		}
 
-		sleep(500);
+		sleep(MOCK_API_SLEEP_TIME);
 
 		return API::Competition(Json::Parse("""{
 	"id": 1896,
@@ -46,7 +48,7 @@ class MockAPI : IAPI
 			return {};
 		}
 
-		sleep(500);
+		sleep(MOCK_API_SLEEP_TIME);
 
 		auto js = Json::Parse("""[
 	{
@@ -65,7 +67,7 @@ class MockAPI : IAPI
 		"leaderboard_compute_type": "MANUAL",
 		"team_leaderboard_compute_type": null,
 		"deleted_on": null,
-		"nb_matches": 6
+		"nb_matches": 4
 	},
 	{
 		"qualifier_challenge_id": null,
@@ -245,7 +247,7 @@ class MockAPI : IAPI
 			return {};
 		}
 
-		sleep(500);
+		sleep(MOCK_API_SLEEP_TIME);
 
 		auto js = Json::Parse("""{
 	"matches": [
@@ -272,18 +274,6 @@ class MockAPI : IAPI
 			"name": "TMGL Show match - Step 1 - Track 1 - 4",
 			"club_match_live_id": "LID-MTCH-s3j05umbxrdokmj",
 			"is_completed": false
-		},
-		{
-			"id": 3472,
-			"name": "TMGL Show match - Step 1 - Track 1 - 5",
-			"club_match_live_id": "LID-MTCH-n35540c5fhjyybl",
-			"is_completed": false
-		},
-		{
-			"id": 3473,
-			"name": "TMGL Show match - Step 1 - Track 1 - 6",
-			"club_match_live_id": "LID-MTCH-abcdefghijklmno",
-			"is_completed": false
 		}
 	]
 }
@@ -298,7 +288,7 @@ class MockAPI : IAPI
 
 	API::Match@ GetMatchAsync(int matchId)
 	{
-		sleep(500);
+		sleep(MOCK_API_SLEEP_TIME);
 
 		auto js = Json::Parse("""{
 	"id": """ + matchId + """,
@@ -472,7 +462,7 @@ class MockAPI : IAPI
 
 	API::MatchParticipant@[] GetMatchParticipants(int matchId)
 	{
-		sleep(500);
+		sleep(MOCK_API_SLEEP_TIME);
 
 		auto js = Json::Parse("""[
 	{
@@ -530,29 +520,34 @@ class MockAPI : IAPI
 
 	API::LiveRanking@ GetMatchLiveRanking(int matchId)
 	{
-		sleep(500);
+		sleep(MOCK_API_SLEEP_TIME);
 
 		auto js = Json::Parse("""{
 	"participants": [
 		{
-			"account_id": "e46a99c4-3b6d-4325-91ef-b655a6bfe6c8",
+			"account_id": "05477e79-25fd-48c2-84c7-e1621aa46517",
 			"score": 6
 		},
 		{
-			"account_id": "44683662-c91a-4432-aed6-dde981506d21",
+			"account_id": "52f28ccd-89d1-4863-a119-822c7c7b6695",
 			"score": 5
 		},
 		{
-			"account_id": "cc907ce4-1a23-4340-b4b8-6312b2acbdd6",
+			"account_id": "1e9ce296-c819-4590-b938-ec230f67f0a8",
 			"score": 3
 		},
 		{
-			"account_id": "f85883d3-263f-4c2b-9705-027368d098f1",
+			"account_id": "0c857beb-fd95-4449-a669-21fb310cacae",
 			"score": 0
 		}
 	]
 }""");
 
 		return API::LiveRanking(js);
+	}
+
+	string GetMapNameAsync(const string &in uid)
+	{
+		return "Poleparty";
 	}
 }

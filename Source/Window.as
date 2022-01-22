@@ -16,10 +16,11 @@ class Window
 		m_refreshing = true;
 		m_refreshingClear = true;
 
-		m_data.RefreshAllAsync();
+		m_data.LoadCompAsync();
 
 		m_refreshing = false;
 		m_refreshingClear = false;
+		m_refreshTime = Setting_RefreshTime;
 
 		while (true) {
 			sleep(1000);
@@ -29,7 +30,7 @@ class Window
 
 				m_refreshing = true;
 
-				m_data.RefreshAsync();
+				m_data.LoadRankingsAsync();
 
 				m_refreshing = false;
 				m_refreshTime = Setting_RefreshTime;

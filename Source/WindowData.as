@@ -39,7 +39,7 @@ class WindowData
 		m_mapName = "";
 	}
 
-	void RefreshAllAsync()
+	void LoadCompAsync()
 	{
 		Clear();
 
@@ -50,10 +50,10 @@ class WindowData
 			m_compId = comp.m_id;
 		}
 
-		RefreshAsync();
+		LoadRoundsAsync();
 	}
 
-	void RefreshAsync()
+	void LoadRoundsAsync()
 	{
 		API::CompetitionRound@ currentRound = null;
 
@@ -69,5 +69,12 @@ class WindowData
 		if (currentRound !is null) {
 			m_roundName = currentRound.m_name.ToUpper();
 		}
+
+		LoadRankingsAsync();
+	}
+
+	void LoadRankingsAsync()
+	{
+		//TODO
 	}
 }

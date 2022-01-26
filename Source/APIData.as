@@ -1,8 +1,14 @@
 class APIData
 {
 	bool m_success = false;
+	string m_error;
+
+	APIDataEvent@[] m_events;
+
+	bool m_compFinished = false;
 
 	API::Competition@ m_competition;
+	API::CompetitionRound@[] m_rounds;
 	API::CompetitionRound@ m_currentRound;
 	API::Match@[] m_matches;
 	API::LiveRanking@[] m_matchesRankings;
@@ -10,11 +16,22 @@ class APIData
 	string m_matchesMapUid;
 	string m_matchesMapName;
 
+	private void AddEvent(APIDataEvent@ event)
+	{
+		m_events.InsertLast(event);
+	}
+
 	void Clear()
 	{
 		m_success = false;
+		m_error = "";
+
+		m_events.RemoveRange(0, m_events.Length);
+
+		m_compFinished = false;
 
 		@m_competition = null;
+		m_rounds.RemoveRange(0, m_rounds.Length);
 		@m_currentRound = null;
 		m_matches.RemoveRange(0, m_matches.Length);
 		m_matchesRankings.RemoveRange(0, m_matchesRankings.Length);
@@ -23,8 +40,10 @@ class APIData
 		m_matchesMapName = "";
 	}
 
-	void Refresh()
+	void RefreshAsync()
 	{
+		m_events.RemoveRange(0, m_events.Length);
+
 		try {
 			if (m_competition is null) {
 				if (Setting_Verbose) {
@@ -61,7 +80,8 @@ class APIData
 
 		} catch {
 			m_success = false;
-			error("Exception while loading data from API: " + getExceptionInfo());
+			m_error = getExceptionInfo();
+			error("Exception while loading data from API: " + m_error);
 		}
 	}
 
@@ -82,21 +102,36 @@ class APIData
 	{
 		API::CompetitionRound@ currentRound;
 
-		auto rounds = g_api.GetCompetitionRoundsAsync(m_competition.m_id);
-		for (uint i = 0; i < rounds.Length; i++) {
-			auto round = rounds[i];
+		m_rounds = g_api.GetCompetitionRoundsAsync(m_competition.m_id);
+		if (m_rounds.Length == 0) {
+			throw("Competition with ID " + m_competition.m_id + " has no rounds!");
+			return;
+		}
+
+		for (uint i = 0; i < m_rounds.Length; i++) {
+			auto round = m_rounds[i];
 			if (round.m_status != "COMPLETED") {
 				@currentRound = round;
 				break;
 			}
 		}
 
+		API::CompetitionRound@ newRound = null;
+
 		if (currentRound is null) {
-			error("Unable to find current round in competition " + m_competition.m_id + ".");
-			return;
+			warn("Competition is finished! No more in-progress rounds for competition " + m_competition.m_id + ".");
+			m_compFinished = true;
+			@newRound = m_rounds[m_rounds.Length - 1];
+
+		} else {
+			m_compFinished = false;
+			@newRound = currentRound;
 		}
 
-		@m_currentRound = currentRound;
+		if (newRound !is m_currentRound) {
+			AddEvent(NewRoundEvent(m_currentRound, newRound));
+		}
+		@m_currentRound = newRound;
 
 		LoadMatchesAsync();
 	}
@@ -169,8 +204,57 @@ class APIData
 		API::LiveRanking@[] res;
 		for (uint i = 0; i < m_matches.Length; i++) {
 			auto match = m_matches[i];
-			res.InsertLast(g_api.GetMatchLiveRanking(match.m_id));
+
+			auto liveRanking = g_api.GetMatchLiveRanking(match.m_id);
+			res.InsertLast(liveRanking);
+
+			if (i < m_matchesRankings.Length) {
+				auto oldLiveRanking = m_matchesRankings[i];
+
+				for (uint j = 0; j < liveRanking.m_participants.Length; j++) {
+					auto participant = liveRanking.m_participants[j];
+					auto oldParticipant = oldLiveRanking.GetParticipant(participant.m_accountId);
+
+					if (oldParticipant is null) {
+						continue;
+					}
+
+					if (oldParticipant.m_score != participant.m_score) {
+						AddEvent(ScoreChangeEvent(match, liveRanking, participant));
+					}
+				}
+			}
+
+			//TODO: Check if liveRanking.m_matchStatus != match.m_status
+			//MatchStatusChangeEvent
 		}
 		m_matchesRankings = res;
+
+		//TODO: If all matches have the completed status
+		if (Setting_AdvanceRound) {
+			Setting_AdvanceRound = false; //TODO: Remove
+
+			print("All matches completed, round finished - loading next round!");
+			m_currentRound.m_status = "COMPLETED";
+
+			int index = m_rounds.FindByRef(m_currentRound);
+			if (index == -1) {
+				throw("Unable to find current round in list of rounds! This is a bug.. Please report!");
+				return;
+			}
+
+			if (index == int(m_rounds.Length) - 1) {
+				warn("Last round finished!");
+				AddEvent(CompFinishEvent());
+				m_compFinished = true;
+				return;
+			}
+
+			auto newRound = m_rounds[index + 1];
+			AddEvent(NewRoundEvent(m_currentRound, newRound));
+			@m_currentRound = newRound;
+
+			LoadMatchesAsync();
+		}
 	}
 }

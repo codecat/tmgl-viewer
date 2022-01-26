@@ -7,6 +7,24 @@ class ProdAPI : IAPI
 		NadeoServices::AddAudience("NadeoClubServices");
 	}
 
+	private void DumpToDisk(const string &in path, const string &in data)
+	{
+		string filePath = IO::FromDataFolder("TMGLResponses");
+		if (!IO::FolderExists(filePath)) {
+			IO::CreateFolder(filePath);
+		}
+
+		filePath += path.Replace("/", "_");
+		if (!IO::FolderExists(filePath)) {
+			IO::CreateFolder(filePath);
+		}
+
+		filePath += "/" + Time::Stamp + ".json";
+
+		IO::File f(filePath, IO::FileMode::Write);
+		f.Write(data);
+	}
+
 	private Json::Value GetJsonAsync(const string &in path, Json::Type expectedType)
 	{
 		auto req = NadeoServices::Get("NadeoClubServices", m_base + path);
@@ -16,6 +34,11 @@ class ProdAPI : IAPI
 		}
 
 		string str = req.String();
+
+		if (Setting_DumpResponses) {
+			DumpToDisk(path, str);
+		}
+
 		auto ret = Json::Parse(str);
 
 		if (ret.GetType() == Json::Type::Object && ret.HasKey("exception")) {

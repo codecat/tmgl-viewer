@@ -1,6 +1,7 @@
 Resources::Font@ g_fontHeader26;
 Resources::Font@ g_fontHeader20;
 
+APIData@ g_apiData;
 Window@ g_window;
 
 string g_currentAccountId;
@@ -50,8 +51,10 @@ void Main()
 		g_canJoinServers = true;
 	}
 
-	//@g_api = MockAPI();
-	@g_api = ProdAPI();
+	@g_api = MockAPI();
+	//@g_api = ProdAPI();
+
+	@g_apiData = APIData();
 
 	@g_window = Window();
 	g_window.LoopAsync();

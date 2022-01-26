@@ -24,5 +24,16 @@ namespace API
 				m_participants.InsertLast(LiveRankingParticipant(jsParticipant));
 			}
 		}
+
+		LiveRankingParticipant@ GetParticipant(const string &in id)
+		{
+			for (uint i = 0; i < m_participants.Length; i++) {
+				auto participant = m_participants[i];
+				if (participant.m_accountId == id) {
+					return participant;
+				}
+			}
+			return null;
+		}
 	}
 }

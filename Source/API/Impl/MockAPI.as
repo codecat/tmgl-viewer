@@ -247,8 +247,7 @@ class MockAPI : IAPI
 	API::RoundMatch@[] GetRoundMatchesAsync(int roundId)
 	{
 		if (roundId	!= 5018) {
-			warn("Returning data for unspecified mock round ID " + roundId);
-			return {};
+			warn("Unexpected mock round ID " + roundId);
 		}
 
 		trace("GetRoundMatchesAsync");
@@ -259,25 +258,25 @@ class MockAPI : IAPI
 	"matches": [
 		{
 			"id": 3468,
-			"name": "TMGL Show match - Step 1 - Track 1 - 1",
+			"name": "TMGL Show match - Step 1 - Track """ + (roundId - 5017) + """ - 1",
 			"club_match_live_id": "LID-MTCH-lg4yu1hltc0bqgg",
 			"is_completed": false
 		},
 		{
 			"id": 3469,
-			"name": "TMGL Show match - Step 1 - Track 1 - 2",
+			"name": "TMGL Show match - Step 1 - Track """ + (roundId - 5017) + """ - 2",
 			"club_match_live_id": "LID-MTCH-yz0a1eyby24flxj",
 			"is_completed": false
 		},
 		{
 			"id": 3470,
-			"name": "TMGL Show match - Step 1 - Track 1 - 3",
+			"name": "TMGL Show match - Step 1 - Track """ + (roundId - 5017) + """ - 3",
 			"club_match_live_id": "LID-MTCH-rivbs45ysmh5pxl",
 			"is_completed": false
 		},
 		{
 			"id": 3471,
-			"name": "TMGL Show match - Step 1 - Track 1 - 4",
+			"name": "TMGL Show match - Step 1 - Track """ + (roundId - 5017) + """ - 4",
 			"club_match_live_id": "LID-MTCH-s3j05umbxrdokmj",
 			"is_completed": false
 		}

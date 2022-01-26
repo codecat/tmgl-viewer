@@ -1,13 +1,14 @@
 class Window
 {
-	bool m_refreshingClear = true;
+	string m_error;
+
 	bool m_refreshing = false;
 	int m_refreshTime = 10;
 
 	string m_compName;
+	bool m_compFinished = false;
 
 	string m_roundName;
-	int m_roundId;
 
 	string m_mapUid;
 	string m_mapName;
@@ -34,7 +35,10 @@ class Window
 
 	void Clear()
 	{
+		m_error = "";
+
 		m_compName = "";
+		m_compFinished = false;
 
 		m_matches.RemoveRange(0, m_matches.Length);
 		m_mainStreams.RemoveRange(0, m_mainStreams.Length);
@@ -55,26 +59,37 @@ class Window
 		return null;
 	}
 
-	void UpdateFromApiData(const APIData &in data)
+	void HandleApiDataEvent(APIDataEvent@ ev)
 	{
-		if (!data.m_success) {
-			return;
-		}
-
-		bool newRound = (m_roundId != data.m_currentRound.m_id);
-		bool newRoundJustStarted = (newRound && m_roundId != 0);
-
-		m_compName = data.m_competition.m_name;
-
-		m_roundName = data.m_currentRound.m_name;
-		m_roundId = data.m_currentRound.m_id;
-
-		m_mapUid = data.m_matchesMapUid;
-		m_mapName = data.m_matchesMapName;
-
-		if (newRound) {
+		auto evNewRound = cast<NewRoundEvent>(ev);
+		if (evNewRound !is null) {
+			print("Event: New round: " + evNewRound.m_newRound.m_name);
 			m_matches.RemoveRange(0, m_matches.Length);
+			//TODO: Play sound
 		}
+	}
+
+	void UpdateFromApiData()
+	{
+		if (!g_apiData.m_success) {
+			m_error = g_apiData.m_error;
+			return;
+		} else {
+			m_error = "";
+		}
+
+		for (uint i = 0; i < g_apiData.m_events.Length; i++) {
+			HandleApiDataEvent(g_apiData.m_events[i]);
+		}
+
+		m_compName = g_apiData.m_competition.m_name;
+
+		m_compFinished = g_apiData.m_compFinished;
+
+		m_roundName = g_apiData.m_currentRound.m_name;
+
+		m_mapUid = g_apiData.m_matchesMapUid;
+		m_mapName = g_apiData.m_matchesMapName;
 
 		m_mainStreams.RemoveRange(0, m_mainStreams.Length);
 		for (uint i = 0; i < Data::Streamer::Global.Length; i++) {
@@ -82,10 +97,10 @@ class Window
 			m_mainStreams.InsertLast(Streamer(streamer.m_name, streamer.m_link));
 		}
 
-		for (uint i = 0; i < data.m_matches.Length; i++) {
-			auto apiMatch = data.m_matches[i];
+		for (uint i = 0; i < g_apiData.m_matches.Length; i++) {
+			auto apiMatch = g_apiData.m_matches[i];
 			auto match = GetMatchFromID(apiMatch.m_id);
-			auto rankings = data.m_matchesRankings[i];
+			auto rankings = g_apiData.m_matchesRankings[i];
 
 			if (match is null) {
 				if (m_matches.Length >= 4) {
@@ -150,11 +165,6 @@ class Window
 				}
 			}
 		}
-
-		if (newRoundJustStarted) {
-			//TODO: Play a sound
-			print("New round just started: " + m_roundName);
-		}
 	}
 
 	void LoopAsync()
@@ -164,33 +174,33 @@ class Window
 			yield();
 		}
 
-		APIData data;
-
-		m_refreshing = true;
-		m_refreshingClear = true;
-
-		data.Refresh();
-		UpdateFromApiData(data);
-
-		m_refreshing = false;
-		m_refreshingClear = false;
-		m_refreshTime = Setting_RefreshTime;
+		m_refreshTime = 0;
 
 		while (true) {
-			sleep(1000);
+			if (m_refreshTime > 0) {
+				m_refreshTime--;
+			}
 
-			if (Setting_Visible && --m_refreshTime == 0) {
+			if (Setting_Visible && !m_compFinished && m_refreshTime <= 0) {
 				trace("Refreshing data..");
 
 				m_refreshing = true;
 
-				data.Refresh();
-				UpdateFromApiData(data);
+				g_apiData.RefreshAsync();
+				UpdateFromApiData();
 
 				m_refreshing = false;
+
 				m_refreshTime = Setting_RefreshTime;
 			}
+
+			sleep(1000);
 		}
+	}
+
+	void Refresh()
+	{
+		m_refreshTime = 0;
 	}
 
 	void Render()
@@ -200,13 +210,17 @@ class Window
 		}
 
 		string title = "\\$e61" + Icons::Trophy + "\\$z TMGL Match Viewer";
-		if (!m_refreshingClear && m_compName != "") {
+		if (m_compName != "") {
 			title += "\\$666 - " + m_compName;
 		}
 
 		UI::SetNextWindowSize(800, 370);
 		if (UI::Begin(title + "###TMGL Match Viewer", Setting_Visible)) {
-			if (m_refreshingClear) {
+			if (m_error != "") {
+				UI::Text("\\$f66" + Icons::TimesCircle + " \\$faa" + m_error);
+			}
+
+			if (m_compName == "") {
 				RenderWaiting();
 			} else {
 				RenderContents();
@@ -268,11 +282,17 @@ class Window
 			m_mainStreams[i].Render(false);
 		}
 
-		// Refresh indicator
 		if (m_refreshing) {
+			// Refresh indicator
 			UI::SameLine();
 			UI::SetCursorPos(UI::GetCursorPos() + vec2(UI::GetContentRegionAvail().x - 20, 0));
 			UI::Text("\\$e61" + Icons::HourglassO);
+
+		} else if (m_compFinished) {
+			// Competition finished indicator
+			UI::SameLine();
+			UI::SetCursorPos(UI::GetCursorPos() + vec2(UI::GetContentRegionAvail().x - 20, 0));
+			UI::Text("\\$6f6" + Icons::CheckCircle);
 		}
 	}
 }

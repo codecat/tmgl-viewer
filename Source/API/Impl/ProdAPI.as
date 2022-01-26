@@ -27,6 +27,13 @@ class ProdAPI : IAPI
 
 	private Json::Value GetJsonAsync(const string &in path, Json::Type expectedType)
 	{
+		if (!NadeoServices::IsAuthenticated("NadeoClubServices")) {
+			trace("Waiting for NadeoClubServices token..");
+			do {
+				yield();
+			} while (!NadeoServices::IsAuthenticated("NadeoClubServices"));
+		}
+
 		auto req = NadeoServices::Get("NadeoClubServices", m_base + path);
 		req.Start();
 		while (!req.Finished()) {

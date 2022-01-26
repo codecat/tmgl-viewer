@@ -1,5 +1,5 @@
 [Setting hidden]
-bool Setting_Visible = true;
+bool Setting_Visible = false;
 
 [Setting category="General" name="Competition ID" description="After changing this, click 'Refresh all' in the Controls tab!"]
 int Setting_CompetitionId = 1896; // totd: 1860

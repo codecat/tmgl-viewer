@@ -14,10 +14,16 @@ namespace API
 
 	class LiveRanking
 	{
+		string m_matchStatus;
 		LiveRankingParticipant@[] m_participants;
 
 		LiveRanking(const Json::Value &in js)
 		{
+			auto jsMatchStatus = js["match_status"];
+			if (jsMatchStatus.GetType() == Json::Type::String) {
+				m_matchStatus = jsMatchStatus;
+			}
+
 			auto jsParticipants = js["participants"];
 			for (uint i = 0; i < jsParticipants.Length; i++) {
 				auto jsParticipant = jsParticipants[i];

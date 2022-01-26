@@ -225,8 +225,10 @@ class APIData
 				}
 			}
 
-			//TODO: Check if liveRanking.m_matchStatus != match.m_status
-			//MatchStatusChangeEvent
+			if (liveRanking.m_matchStatus != match.m_status) {
+				AddEvent(MatchStatusChangeEvent(match, match.m_status, liveRanking.m_matchStatus));
+				match.m_status = liveRanking.m_matchStatus;
+			}
 		}
 		m_matchesRankings = res;
 

@@ -20,6 +20,16 @@ class NewRoundEvent : APIDataEvent
 
 class MatchStatusChangeEvent : APIDataEvent
 {
+	API::Match@ m_match;
+	string m_oldStatus;
+	string m_newStatus;
+
+	MatchStatusChangeEvent(API::Match@ match, const string &in oldStatus, const string &in newStatus)
+	{
+		@m_match = match;
+		m_oldStatus = oldStatus;
+		m_newStatus = newStatus;
+	}
 }
 
 class ScoreChangeEvent : APIDataEvent

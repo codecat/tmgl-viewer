@@ -530,11 +530,12 @@ class MockAPI : IAPI
 
 	API::LiveRanking@ GetMatchLiveRanking(int matchId)
 	{
-		trace("GetMatchLiveRanking");
+		trace("GetMatchLiveRanking " + matchId);
 
 		sleep(MOCK_API_SLEEP_TIME);
 
 		auto js = Json::Parse("""{
+	"match_status": "COMPLETED",
 	"participants": [
 		{
 			"account_id": "05477e79-25fd-48c2-84c7-e1621aa46517",

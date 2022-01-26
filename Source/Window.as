@@ -65,7 +65,18 @@ class Window
 		if (evNewRound !is null) {
 			print("Event: New round: " + evNewRound.m_newRound.m_name);
 			m_matches.RemoveRange(0, m_matches.Length);
+			if (evNewRound.m_oldRound !is null) {
+				//TODO: Play sound
+				trace("Todo: play new round sound");
+			}
+			return;
+		}
+
+		auto evMatchStatusChange = cast<MatchStatusChangeEvent>(ev);
+		if (evMatchStatusChange !is null) {
+			print("Event: Match status changed: " + evMatchStatusChange.m_match.m_name + " to " + tostring(evMatchStatusChange.m_newStatus));
 			//TODO: Play sound
+			return;
 		}
 	}
 
@@ -112,12 +123,7 @@ class Window
 			}
 
 			match.m_joinLink = apiMatch.m_joinLink;
-
-			if (apiMatch.m_status == "COMPLETED") {
-				match.m_status = MatchStatus::Completed;
-			} else if (apiMatch.m_status == "PENDING") {
-				match.m_status = MatchStatus::Warmup;
-			}
+			match.m_status = MatchStatusFromString(apiMatch.m_status);
 
 			//TODO: Update progressively instead of re-building the list
 			match.m_players.RemoveRange(0, match.m_players.Length);

@@ -51,8 +51,8 @@ void Main()
 		g_canJoinServers = true;
 	}
 
-	@g_api = MockAPI();
-	//@g_api = ProdAPI();
+	//@g_api = MockAPI();
+	@g_api = ProdAPI();
 
 	@g_apiData = APIData();
 

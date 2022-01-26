@@ -1,6 +1,13 @@
+enum ProdAPIBase
+{
+	Comp,
+	Club,
+}
+
 class ProdAPI : IAPI
 {
-	string m_base = "https://competition.trackmania.nadeo.club/";
+	string m_baseComp = "https://competition.trackmania.nadeo.club/";
+	string m_baseClub = "https://club.trackmania.nadeo.club/";
 
 	ProdAPI()
 	{
@@ -14,7 +21,7 @@ class ProdAPI : IAPI
 			IO::CreateFolder(filePath);
 		}
 
-		filePath += path.Replace("/", "_");
+		filePath += "/" + path.Replace("/", "_");
 		if (!IO::FolderExists(filePath)) {
 			IO::CreateFolder(filePath);
 		}
@@ -25,7 +32,7 @@ class ProdAPI : IAPI
 		f.Write(data);
 	}
 
-	private Json::Value GetJsonAsync(const string &in path, Json::Type expectedType)
+	private Json::Value GetJsonAsync(const string &in path, Json::Type expectedType, ProdAPIBase base = ProdAPIBase::Comp)
 	{
 		if (!NadeoServices::IsAuthenticated("NadeoClubServices")) {
 			trace("Waiting for NadeoClubServices token..");
@@ -34,7 +41,15 @@ class ProdAPI : IAPI
 			} while (!NadeoServices::IsAuthenticated("NadeoClubServices"));
 		}
 
-		auto req = NadeoServices::Get("NadeoClubServices", m_base + path);
+		string url;
+		if (base == ProdAPIBase::Comp) {
+			url = m_baseComp;
+		} else if (base == ProdAPIBase::Club) {
+			url = m_baseClub;
+		}
+		url += path;
+
+		auto req = NadeoServices::Get("NadeoClubServices", url);
 		req.Start();
 		while (!req.Finished()) {
 			yield();
@@ -90,9 +105,9 @@ class ProdAPI : IAPI
 		return ret;
 	}
 
-	API::Match@ GetMatchAsync(int matchId)
+	API::Match@ GetMatchAsync(const string &in matchLid)
 	{
-		return API::Match(GetJsonAsync("api/matches/" + matchId, Json::Type::Object));
+		return API::Match(GetJsonAsync("api/matches/" + matchLid, Json::Type::Object, ProdAPIBase::Club));
 	}
 
 	API::MatchParticipant@[] GetMatchParticipants(int matchId)
@@ -108,6 +123,6 @@ class ProdAPI : IAPI
 
 	API::LiveRanking@ GetMatchLiveRanking(int matchId)
 	{
-		return API::LiveRanking(GetJsonAsync("api/matches/" + matchId + "/live-ranking", Json::Type::Object));
+		return API::LiveRanking(GetJsonAsync("api/matches/" + matchId + "/live-ranking", Json::Type::Object, ProdAPIBase::Club));
 	}
 }

@@ -292,9 +292,11 @@ class MockAPI : IAPI
 		return ret;
 	}
 
-	API::Match@ GetMatchAsync(int matchId)
+	API::Match@ GetMatchAsync(const string &in matchLid)
 	{
 		trace("GetMatchAsync");
+
+		int matchId = 3478; //TODO
 
 		sleep(MOCK_API_SLEEP_TIME);
 

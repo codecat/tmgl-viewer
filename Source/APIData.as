@@ -144,7 +144,7 @@ class APIData
 		for (uint i = 0; i < arrRoundMatches.Length; i++) {
 			auto rm = arrRoundMatches[i];
 
-			auto match = g_api.GetMatchAsync(rm.m_id);
+			auto match = g_api.GetMatchAsync(rm.m_liveId);
 			if (match is null) {
 				error("Couldn't fetch match with ID " + rm.m_id);
 				return;
@@ -201,9 +201,16 @@ class APIData
 
 	void LoadRankingsAsync()
 	{
+		bool allCompleted = (m_matches.Length > 0);
+
 		API::LiveRanking@[] res;
 		for (uint i = 0; i < m_matches.Length; i++) {
 			auto match = m_matches[i];
+
+			// Don't have to fetch status for completed matches
+			if (match.m_status == "COMPLETED") {
+				continue;
+			}
 
 			auto liveRanking = g_api.GetMatchLiveRanking(match.m_id);
 			res.InsertLast(liveRanking);
@@ -229,11 +236,14 @@ class APIData
 				AddEvent(MatchStatusChangeEvent(match, match.m_status, liveRanking.m_matchStatus));
 				match.m_status = liveRanking.m_matchStatus;
 			}
+
+			if (match.m_status != "COMPLETED") {
+				allCompleted = false;
+			}
 		}
 		m_matchesRankings = res;
 
-		//TODO: If all matches have the completed status
-		if (Setting_AdvanceRound) {
+		if (Setting_AdvanceRound || allCompleted) {
 			Setting_AdvanceRound = false; //TODO: Remove
 
 			print("All matches completed, round finished - loading next round!");

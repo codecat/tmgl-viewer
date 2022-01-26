@@ -2,18 +2,18 @@
 bool Setting_Visible = false;
 
 [Setting category="General" name="Competition ID" description="After changing this, click 'Refresh all' in the Controls tab!"]
-int Setting_CompetitionId = 1896; // totd: 1860
+int Setting_CompetitionId = 1895;
 
 [Setting category="General" name="Refresh time in seconds"]
 int Setting_RefreshTime = 10;
 
-[Setting category="Debug" name="Verbose logging"]
+[Setting category="Debug" name="Verbose logging" description="Enable verbose logging of requests. Enable only if needed!"]
 bool Setting_Verbose = true;
 
-[Setting category="Debug" name="Dump responses to disk"]
+[Setting category="Debug" name="Dump responses to disk" description="Dump responses to disk. Enable only if needed!"]
 bool Setting_DumpResponses = false;
 
-[Setting category="Debug" name="Advance round"]
+[Setting category="Debug" name="Force advance round" description="Force an advancement to the next round. Only use if needed!"]
 bool Setting_AdvanceRound = false;
 
 [SettingsTab name="Controls"]

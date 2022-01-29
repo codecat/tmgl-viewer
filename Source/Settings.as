@@ -4,6 +4,9 @@ bool Setting_Visible = false;
 [Setting category="General" name="Refresh time in seconds" min=10 max=60]
 int Setting_RefreshTime = 10;
 
+[Setting category="General" name="Enable notification sounds"]
+bool Setting_Sounds = true;
+
 [Setting category="General" name="Competition ID" description="If you change this, click 'Refresh all' in the Controls tab!"]
 int Setting_CompetitionId = 1909;
 

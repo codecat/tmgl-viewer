@@ -33,6 +33,15 @@ class Window
 	}
 	*/
 
+	void SendNotify(const string &in text)
+	{
+		UI::ShowNotification(
+			"\\$s" + Icons::Trophy + " TMGL Match Viewer",
+			"\\$s" + text,
+			vec4(0xE0/255.0f*0.75f, 0x60/255.0f*0.75f, 0x10/255.0f*0.75f, 1.0f)
+		);
+	}
+
 	void Clear()
 	{
 		m_error = "";
@@ -66,16 +75,25 @@ class Window
 			print("Event: New round: " + evNewRound.m_newRound.m_name);
 			m_matches.RemoveRange(0, m_matches.Length);
 			if (evNewRound.m_oldRound !is null) {
-				//TODO: Play sound
-				trace("Todo: play new round sound");
+				if (Setting_Sounds) {
+					Audio::Play(g_soundRound);
+				}
+				SendNotify("The next round is starting: " + evNewRound.m_newRound.m_name);
 			}
 			return;
 		}
 
 		auto evMatchStatusChange = cast<MatchStatusChangeEvent>(ev);
 		if (evMatchStatusChange !is null) {
-			print("Event: Match status changed: " + evMatchStatusChange.m_match.m_name + " to " + tostring(evMatchStatusChange.m_newStatus));
-			//TODO: Play sound
+			print("Event: Match status changed: " + evMatchStatusChange.m_match.m_name + " to " + evMatchStatusChange.m_newStatus);
+			if (Setting_Sounds) {
+				Audio::Play(g_soundMatch);
+			}
+			if (evMatchStatusChange.m_newStatus == "COMPLETED") {
+				SendNotify("Match completed! " + evMatchStatusChange.m_match.m_name);
+			} else {
+				SendNotify("Match status changed: " + evMatchStatusChange.m_match.m_name + ": " + evMatchStatusChange.m_newStatus);
+			}
 			return;
 		}
 	}
@@ -218,6 +236,7 @@ class Window
 		}
 
 		string title = "\\$e61" + Icons::Trophy + "\\$z TMGL Match Viewer";
+		title += " \\$e61(BETA)";
 		if (m_compName != "") {
 			title += "\\$666 - " + m_compName;
 		}

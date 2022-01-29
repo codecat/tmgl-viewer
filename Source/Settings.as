@@ -8,7 +8,7 @@ int Setting_RefreshTime = 10;
 int Setting_CompetitionId = 1909;
 
 [Setting category="Debug" name="Verbose logging" description="Enable verbose logging of requests. Enable only if needed!"]
-bool Setting_Verbose = true;
+bool Setting_Verbose = false;
 
 [Setting category="Debug" name="Dump responses to disk" description="Dump responses to disk. Enable only if needed!"]
 bool Setting_DumpResponses = false;

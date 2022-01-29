@@ -188,7 +188,9 @@ class Window
 			}
 
 			if (Setting_Visible && !m_compFinished && m_refreshTime <= 0) {
-				trace("Refreshing data..");
+				if (Setting_Verbose) {
+					trace("Refreshing data..");
+				}
 
 				m_refreshing = true;
 

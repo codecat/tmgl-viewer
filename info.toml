@@ -3,6 +3,9 @@ name = "TMGL Match Viewer"
 author = "Miss"
 category = "TMGL"
 
+siteid = 165
+version = "1.0"
+
 [script]
 dependencies = [ "NadeoServices" ]
 imports = [ "Icons.as", "Formatting.as" ]

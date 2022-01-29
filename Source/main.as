@@ -45,9 +45,16 @@ void Main()
 		warn("Current user is a TMGL player.");
 		g_canJoinServers = true;
 	}
+
 	auto streamerPlayer = Data::Player::FromStreamerID(g_currentAccountId);
 	if (streamerPlayer !is null) {
 		warn("Current user is a streamer for " + streamerPlayer.m_nickname + ".");
+		g_canJoinServers = true;
+	}
+
+	auto streamerGlobal = Data::Streamer::GlobalFromPlayerID(g_currentAccountId);
+	if (streamerGlobal !is null) {
+		warn("Current user is a global streamer");
 		g_canJoinServers = true;
 	}
 

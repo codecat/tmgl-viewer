@@ -60,7 +60,7 @@ void Main()
 
 	auto streamerGlobal = Data::Streamer::GlobalFromPlayerID(g_currentAccountId);
 	if (streamerGlobal !is null) {
-		warn("Current user is a global streamer");
+		warn("Current user is a global streamer.");
 		g_canJoinServers = true;
 	}
 

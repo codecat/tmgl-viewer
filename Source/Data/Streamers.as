@@ -50,7 +50,10 @@ namespace Data
 			Global.RemoveRange(0, Global.Length);
 			g_items.DeleteAll();
 
-			auto jsStreamers = Json::FromFile("Data/Streamers.json");
+			//TODO: New Json::FromFile is only available in unreleased Openplanet update
+			auto fileStreamers = IO::FileSource("Data/Streamers.json");
+			auto jsStreamers = Json::Parse(fileStreamers.ReadToEnd());
+			//auto jsStreamers = Json::FromFile("Data/Streamers.json");
 
 			auto jsGlobal = jsStreamers["global"];
 			for (uint i = 0; i < jsGlobal.Length; i++) {

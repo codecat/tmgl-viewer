@@ -32,7 +32,10 @@ namespace Data
 		{
 			g_items.DeleteAll();
 
-			auto jsPlayers = Json::FromFile("Data/Players.json");
+			//TODO: New Json::FromFile is only available in unreleased Openplanet update
+			auto filePlayers = IO::FileSource("Data/Players.json");
+			auto jsPlayers = Json::Parse(filePlayers.ReadToEnd());
+			//auto jsPlayers = Json::FromFile("Data/Players.json");
 			auto playerIds = jsPlayers.GetKeys();
 
 			for (uint i = 0; i < playerIds.Length; i++) {

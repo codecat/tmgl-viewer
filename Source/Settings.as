@@ -1,11 +1,11 @@
 [Setting hidden]
 bool Setting_Visible = false;
 
+[Setting category="General" name="Refresh time in seconds" min=10 max=60]
+int Setting_RefreshTime = 10;
+
 [Setting category="General" name="Competition ID" description="If you change this, click 'Refresh all' in the Controls tab!"]
 int Setting_CompetitionId = 1909;
-
-[Setting category="General" name="Refresh time in seconds"]
-int Setting_RefreshTime = 10;
 
 [Setting category="Debug" name="Verbose logging" description="Enable verbose logging of requests. Enable only if needed!"]
 bool Setting_Verbose = true;

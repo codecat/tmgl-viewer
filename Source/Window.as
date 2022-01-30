@@ -125,7 +125,9 @@ class Window
 
 			if (match is null) {
 				if (m_matches.Length >= 4) {
-					warn("Unexpected new match ID " + apiMatch.m_id + " when there are already " + m_matches.Length + "! This is really bad!");
+					warn("Unexpected new match ID " + apiMatch.m_id + " when there are already " + m_matches.Length + "! This is really bad! Clearing the matches list even though this shouldn't happen..");
+					//HACK: Figure out why this happens!
+					m_matches.RemoveRange(0, m_matches.Length);
 				}
 
 				@match = Match(apiMatch.m_id, m_matches.Length + 1);

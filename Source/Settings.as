@@ -7,6 +7,9 @@ int Setting_RefreshTime = 10;
 [Setting category="General" name="Enable notification sounds"]
 bool Setting_Sounds = true;
 
+[Setting category="General" name="Always show window" description="Displays the window even when the overlay is hidden"]
+bool Setting_AlwaysVisible = true;
+
 [Setting category="General" name="Competition ID" description="If you change this, click 'Refresh all' in the Controls tab!"]
 int Setting_CompetitionId = 1909;
 

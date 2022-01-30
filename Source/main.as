@@ -19,7 +19,14 @@ void RenderMenu()
 
 void RenderInterface()
 {
-	if (g_window !is null) {
+	if (!Setting_AlwaysVisible && g_window !is null) {
+		g_window.Render();
+	}
+}
+
+void Render()
+{
+	if (Setting_AlwaysVisible && g_window !is null) {
 		g_window.Render();
 	}
 }

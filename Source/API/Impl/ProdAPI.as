@@ -112,7 +112,7 @@ class ProdAPI : IAPI
 
 	API::MatchParticipant@[] GetMatchParticipants(int matchId)
 	{
-		auto js = GetJsonAsync("api/matches/" + matchId + "/participants", Json::Type::Array);
+		auto js = GetJsonAsync("api/matches/" + matchId + "/participants", Json::Type::Array, ProdAPIBase::Club);
 
 		API::MatchParticipant@[] ret;
 		for (uint i = 0; i < js.Length; i++) {

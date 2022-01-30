@@ -24,7 +24,10 @@ namespace API
 			m_startDate = int64(double(js["start_date"]));
 			m_endDate = int64(double(js["end_date"]));
 
-			m_joinLink = js["join_link"];
+			auto jsJoinLink = js["join_link"];
+			if (jsJoinLink.GetType() == Json::Type::String) {
+				m_joinLink = jsJoinLink;
+			}
 
 			auto jsServerStatus = js["server_status"];
 			if (jsServerStatus.GetType() == Json::Type::String) {

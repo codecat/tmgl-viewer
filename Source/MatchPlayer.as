@@ -31,9 +31,9 @@ class MatchPlayer
 
 			string scoreText = tostring(m_score);
 			if (m_score == 2) {
-				scoreText = "\\$f77Finalist";
+				scoreText = "\\$f77F";
 			} else if (m_score >= 3) {
-				scoreText = "\\$7f7Winner";
+				scoreText = "\\$7f7W";
 			}
 
 			vec2 cursorPos = UI::GetCursorPos();

@@ -72,8 +72,10 @@ class Match
 		}
 
 		// Stream button
-		for (uint i = 0; i < m_streamers.Length; i++) {
-			m_streamers[i].Render(true);
+		if (!g_canJoinServers) {
+			for (uint i = 0; i < m_streamers.Length; i++) {
+				m_streamers[i].Render(true);
+			}
 		}
 	}
 }

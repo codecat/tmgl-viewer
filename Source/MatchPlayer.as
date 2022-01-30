@@ -25,15 +25,24 @@ class MatchPlayer
 		} else {
 			UI::Text(m_displayName);
 		}
-		UI::SameLine();
 
-		string scoreText = tostring(m_score);
-		vec2 cursorPos = UI::GetCursorPos();
-		float spaceLeft = UI::GetContentRegionAvail().x;
-		vec2 textSize = Draw::MeasureString(scoreText);
+		if (!ended) {
+			UI::SameLine();
 
-		UI::SetCursorPos(cursorPos + vec2(spaceLeft - textSize.x, 0));
-		UI::Text(scoreText);
+			string scoreText = tostring(m_score);
+			if (m_score == 2) {
+				scoreText = "\\$f77Finalist";
+			} else if (m_score >= 3) {
+				scoreText = "\\$7f7Winner";
+			}
+
+			vec2 cursorPos = UI::GetCursorPos();
+			float spaceLeft = UI::GetContentRegionAvail().x;
+			vec2 textSize = Draw::MeasureString(scoreText);
+
+			UI::SetCursorPos(cursorPos + vec2(spaceLeft - textSize.x, 0));
+			UI::Text(scoreText);
+		}
 	}
 
 	int opCmp(const MatchPlayer &in other)

@@ -156,6 +156,7 @@ class Window
 
 				match.m_players.InsertLast(newPlayer);
 			}
+			match.m_players.SortDesc();
 
 			match.m_streamers.RemoveRange(0, match.m_streamers.Length);
 			for (uint j = 0; j < match.m_players.Length; j++) {

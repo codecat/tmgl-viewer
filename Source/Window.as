@@ -220,6 +220,8 @@ class Window
 	{
 		m_refreshing = true;
 
+		m_matches.RemoveRange(0, m_matches.Length);
+
 		g_apiData.PrevRoundAsync();
 		UpdateFromApiData();
 
@@ -229,6 +231,8 @@ class Window
 	void NextRoundAsync()
 	{
 		m_refreshing = true;
+
+		m_matches.RemoveRange(0, m_matches.Length);
 
 		g_apiData.NextRoundAsync();
 		UpdateFromApiData();

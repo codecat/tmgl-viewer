@@ -7,6 +7,8 @@ class Window
 
 	string m_compName;
 	bool m_compFinished = false;
+	bool m_roundFinished = false;
+	int m_roundIndex = -1;
 
 	string m_roundName;
 
@@ -48,6 +50,8 @@ class Window
 
 		m_compName = "";
 		m_compFinished = false;
+		m_roundFinished = false;
+		m_roundIndex = -1;
 
 		m_matches.RemoveRange(0, m_matches.Length);
 		m_mainStreams.RemoveRange(0, m_mainStreams.Length);
@@ -70,19 +74,6 @@ class Window
 
 	void HandleApiDataEvent(APIDataEvent@ ev)
 	{
-		auto evNewRound = cast<NewRoundEvent>(ev);
-		if (evNewRound !is null) {
-			print("Event: New round: " + evNewRound.m_newRound.m_name);
-			m_matches.RemoveRange(0, m_matches.Length);
-			if (evNewRound.m_oldRound !is null) {
-				if (Setting_Sounds) {
-					Audio::Play(g_soundRound);
-				}
-				SendNotify("The next round is starting: " + evNewRound.m_newRound.m_name);
-			}
-			return;
-		}
-
 		auto evMatchStatusChange = cast<MatchStatusChangeEvent>(ev);
 		if (evMatchStatusChange !is null) {
 			print("Event: Match status changed: " + evMatchStatusChange.m_match.m_name + " to " + evMatchStatusChange.m_newStatus);
@@ -112,8 +103,9 @@ class Window
 		}
 
 		m_compName = g_apiData.m_competition.m_name;
-
 		m_compFinished = g_apiData.m_compFinished;
+		m_roundFinished = (g_apiData.m_currentRound.m_status == "COMPLETED");
+		m_roundIndex = g_apiData.m_currentRoundIndex;
 
 		m_roundName = g_apiData.m_currentRound.m_name;
 
@@ -224,6 +216,26 @@ class Window
 		}
 	}
 
+	void PrevRoundAsync()
+	{
+		m_refreshing = true;
+
+		g_apiData.PrevRoundAsync();
+		UpdateFromApiData();
+
+		m_refreshing = false;
+	}
+
+	void NextRoundAsync()
+	{
+		m_refreshing = true;
+
+		g_apiData.NextRoundAsync();
+		UpdateFromApiData();
+
+		m_refreshing = false;
+	}
+
 	void Refresh()
 	{
 		m_refreshTime = 0;
@@ -269,12 +281,40 @@ class Window
 		UI::Text(m_roundName.ToUpper());
 		UI::SameLine();
 
+		UI::PopFont();
+
+		if (m_refreshing) {
+			UI::BeginDisabled();
+		}
+
+		if (m_roundIndex > 0) {
+			if (UI::RedButton(Icons::ArrowLeft + " Last round")) {
+				startnew(CoroutineFunc(this.PrevRoundAsync));
+			}
+			UI::SameLine();
+		}
+
+		if (m_roundFinished && !m_compFinished) {
+			if (UI::GreenButton("Next round " + Icons::ArrowRight)) {
+				startnew(CoroutineFunc(this.NextRoundAsync));
+			}
+			UI::SameLine();
+		}
+
+		if (m_refreshing) {
+			UI::EndDisabled();
+		}
+
+		UI::PushFont(g_fontHeader26);
+
+		string mapName = m_mapName.ToUpper();
+
 		vec2 cursorPos = UI::GetCursorPos();
 		float spaceLeft = UI::GetContentRegionAvail().x;
-		vec2 textSize = Draw::MeasureString(m_mapName, g_fontHeader26);
+		vec2 textSize = Draw::MeasureString(mapName, g_fontHeader26);
 
 		UI::SetCursorPos(cursorPos + vec2(spaceLeft - textSize.x, 0));
-		UI::Text(m_mapName);
+		UI::Text(mapName);
 		//TODO: Button to open Trackmania.io
 
 		UI::PopFont();

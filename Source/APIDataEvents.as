@@ -6,18 +6,6 @@ class CompFinishEvent : APIDataEvent
 {
 }
 
-class NewRoundEvent : APIDataEvent
-{
-	API::CompetitionRound@ m_oldRound;
-	API::CompetitionRound@ m_newRound;
-
-	NewRoundEvent(API::CompetitionRound@ oldRound, API::CompetitionRound@ newRound)
-	{
-		@m_oldRound = oldRound;
-		@m_newRound = newRound;
-	}
-}
-
 class MatchStatusChangeEvent : APIDataEvent
 {
 	API::Match@ m_match;

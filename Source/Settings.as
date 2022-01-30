@@ -16,9 +16,6 @@ bool Setting_Verbose = false;
 [Setting category="Debug" name="Dump responses to disk" description="Dump responses to disk. Enable only if needed!"]
 bool Setting_DumpResponses = false;
 
-[Setting category="Debug" name="Force advance round" description="Force an advancement to the next round. Only use if needed!"]
-bool Setting_AdvanceRound = false;
-
 [SettingsTab name="Controls"]
 void RenderControlsSettings()
 {

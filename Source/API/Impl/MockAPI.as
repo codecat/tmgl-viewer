@@ -4,7 +4,7 @@ class MockAPI : IAPI
 {
 	API::Competition@ GetCompetitionAsync(int compId)
 	{
-		if (compId != 1896) {
+		if (compId != 1909) {
 			error("Unexpected mock competition ID: " + compId);
 			return null;
 		}
@@ -14,7 +14,7 @@ class MockAPI : IAPI
 		sleep(MOCK_API_SLEEP_TIME);
 
 		return API::Competition(Json::Parse("""{
-	"id": 1896,
+	"id": 1909,
 	"live_id": "LID-COMP-3kf51ym0sumijwx",
 	"creator": "f85883d3-263f-4c2b-9705-027368d098f1",
 	"name": "TMGL Show match",
@@ -45,7 +45,7 @@ class MockAPI : IAPI
 
 	API::CompetitionRound@[] GetCompetitionRoundsAsync(int compId)
 	{
-		if (compId != 1896) {
+		if (compId != 1909) {
 			error("Unexpected mock competition ID: " + compId);
 			return {};
 		}
@@ -296,13 +296,22 @@ class MockAPI : IAPI
 	{
 		trace("GetMatchAsync");
 
-		int matchId = 3478; //TODO
+		int matchId = 0;
+		if (matchLid == "LID-MTCH-lg4yu1hltc0bqgg") {
+			matchId = 3468;
+		} else if (matchLid == "LID-MTCH-yz0a1eyby24flxj") {
+			matchId = 3469;
+		} else if (matchLid == "LID-MTCH-rivbs45ysmh5pxl") {
+			matchId = 3470;
+		} else if (matchLid == "LID-MTCH-s3j05umbxrdokmj") {
+			matchId = 3471;
+		}
 
 		sleep(MOCK_API_SLEEP_TIME);
 
 		auto js = Json::Parse("""{
 	"id": """ + matchId + """,
-	"live_id": "LID-MTCH-uo40zijydob4b4c",
+	"live_id": """ + ("\"" + matchLid + "\"") + """,
 	"name": "TMGL Show match - Step 1 - Track 1 - """ + (matchId - 3467) + """",
 	"start_date": 1642668027,
 	"end_date": 1642668867,

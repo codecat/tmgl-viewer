@@ -9,7 +9,6 @@ bool g_canJoinServers = false;
 IAPI@ g_api;
 
 Audio::Sample@ g_soundMatch;
-Audio::Sample@ g_soundRound;
 
 void RenderMenu()
 {
@@ -43,7 +42,6 @@ void Main()
 	@g_fontHeader20 = Resources::GetFont("Fonts/Montserrat-Bold.ttf", 20, -1, -1, true);
 
 	@g_soundMatch = Resources::GetAudioSample("Audio/Match.wav");
-	@g_soundRound = Resources::GetAudioSample("Audio/Round.wav");
 
 	Data::Load();
 

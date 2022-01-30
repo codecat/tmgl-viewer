@@ -10,6 +10,7 @@ class APIData
 	API::Competition@ m_competition;
 	API::CompetitionRound@[] m_rounds;
 	API::CompetitionRound@ m_currentRound;
+	int m_currentRoundIndex = -1;
 	API::Match@[] m_matches;
 	API::LiveRanking@[] m_matchesRankings;
 
@@ -33,6 +34,7 @@ class APIData
 		@m_competition = null;
 		m_rounds.RemoveRange(0, m_rounds.Length);
 		@m_currentRound = null;
+		m_currentRoundIndex = -1;
 		m_matches.RemoveRange(0, m_matches.Length);
 		m_matchesRankings.RemoveRange(0, m_matchesRankings.Length);
 
@@ -101,6 +103,7 @@ class APIData
 	void LoadRoundsAsync()
 	{
 		API::CompetitionRound@ currentRound;
+		int currentRoundIndex = -1;
 
 		m_rounds = g_api.GetCompetitionRoundsAsync(m_competition.m_id);
 		if (m_rounds.Length == 0) {
@@ -112,26 +115,28 @@ class APIData
 			auto round = m_rounds[i];
 			if (round.m_status != "COMPLETED") {
 				@currentRound = round;
+				currentRoundIndex = i;
 				break;
 			}
 		}
 
 		API::CompetitionRound@ newRound = null;
+		int newRoundIndex = -1;
 
 		if (currentRound is null) {
 			warn("Competition is finished! No more in-progress rounds for competition " + m_competition.m_id + ".");
 			m_compFinished = true;
 			@newRound = m_rounds[m_rounds.Length - 1];
+			newRoundIndex = int(m_rounds.Length) - 1;
 
 		} else {
 			m_compFinished = false;
 			@newRound = currentRound;
+			newRoundIndex = currentRoundIndex;
 		}
 
-		if (newRound !is m_currentRound) {
-			AddEvent(NewRoundEvent(m_currentRound, newRound));
-		}
 		@m_currentRound = newRound;
+		m_currentRoundIndex = newRoundIndex;
 
 		LoadMatchesAsync();
 	}
@@ -207,11 +212,6 @@ class APIData
 		for (uint i = 0; i < m_matches.Length; i++) {
 			auto match = m_matches[i];
 
-			// Don't have to fetch status for completed matches
-			if (match.m_status == "COMPLETED") {
-				continue;
-			}
-
 			auto liveRanking = g_api.GetMatchLiveRanking(match.m_id);
 			res.InsertLast(liveRanking);
 
@@ -241,32 +241,43 @@ class APIData
 				allCompleted = false;
 			}
 		}
+
 		m_matchesRankings = res;
 
-		if (Setting_AdvanceRound || allCompleted) {
-			Setting_AdvanceRound = false; //TODO: Remove
-
-			print("All matches completed, round finished - loading next round!");
+		if (allCompleted) {
 			m_currentRound.m_status = "COMPLETED";
+			//NextRoundAsync();
 
-			int index = m_rounds.FindByRef(m_currentRound);
-			if (index == -1) {
-				throw("Unable to find current round in list of rounds! This is a bug.. Please report!");
-				return;
-			}
-
-			if (index == int(m_rounds.Length) - 1) {
+			if (m_currentRoundIndex == int(m_rounds.Length) - 1) {
 				warn("Last round finished!");
 				AddEvent(CompFinishEvent());
 				m_compFinished = true;
 				return;
 			}
-
-			auto newRound = m_rounds[index + 1];
-			AddEvent(NewRoundEvent(m_currentRound, newRound));
-			@m_currentRound = newRound;
-
-			LoadMatchesAsync();
 		}
+	}
+
+	void PrevRoundAsync()
+	{
+		if (m_currentRoundIndex <= 0) {
+			return;
+		}
+
+		auto newRound = m_rounds[--m_currentRoundIndex];
+		@m_currentRound = newRound;
+
+		LoadMatchesAsync();
+	}
+
+	void NextRoundAsync()
+	{
+		if (m_currentRoundIndex == int(m_rounds.Length) - 1) {
+			return;
+		}
+
+		auto newRound = m_rounds[++m_currentRoundIndex];
+		@m_currentRound = newRound;
+
+		LoadMatchesAsync();
 	}
 }

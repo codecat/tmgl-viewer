@@ -4,7 +4,7 @@ author = "Miss"
 category = "TMGL"
 
 siteid = 165
-version = "0.3.1"
+version = "0.3.2"
 
 [script]
 dependencies = [ "NadeoServices" ]

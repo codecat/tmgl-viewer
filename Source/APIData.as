@@ -74,6 +74,23 @@ class APIData
 				return;
 			}
 
+			// Refresh match info if servers aren't loaded yet
+			if (g_canJoinServers) {
+				bool hasAllServers = true;
+				for (uint i = 0; i < m_matches.Length; i++) {
+					auto match = m_matches[i];
+					if (match.m_joinLink == "") {
+						if (Setting_Verbose) {
+							trace("No join link yet for match " + match.m_id + ", trying to get it now");
+						}
+						auto m = g_api.GetMatchAsync(match.m_liveId);
+						if (m.m_joinLink != "") {
+							match.m_joinLink = m.m_joinLink;
+						}
+					}
+				}
+			}
+
 			if (Setting_Verbose) {
 				trace("Ready, calling LoadRankingsAsync");
 			}

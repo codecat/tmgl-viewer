@@ -146,6 +146,8 @@ class APIData
 		auto arrRoundMatches = g_api.GetRoundMatchesAsync(m_currentRound.m_id);
 
 		API::Match@[] res;
+		API::LiveRanking@[] resRankings;
+
 		for (uint i = 0; i < arrRoundMatches.Length; i++) {
 			auto rm = arrRoundMatches[i];
 
@@ -155,10 +157,25 @@ class APIData
 				return;
 			}
 
+			//HACK: Get match participants before live ranking returns scores
+			/*
+			auto participants = g_api.GetMatchParticipants(rm.m_id);
+			auto lr = API::LiveRanking();
+			lr.m_matchStatus = match.m_status;
+			for (uint j = 0; j < participants.Length; j++) {
+				auto lrp = API::LiveRankingParticipant();
+				lrp.m_accountId = participants[j].m_id;
+				lrp.m_score = 0;
+				lr.m_participants.InsertLast(lrp);
+			}
+			*/
+
 			res.InsertLast(match);
+			//resRankings.InsertLast(lr);
 		}
 
 		m_matches = res;
+		//m_matchesRankings = resRankings;
 
 		LoadMapInfoAsync();
 

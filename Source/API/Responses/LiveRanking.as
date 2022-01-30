@@ -5,6 +5,10 @@ namespace API
 		string m_accountId;
 		int m_score;
 
+		LiveRankingParticipant()
+		{
+		}
+
 		LiveRankingParticipant(const Json::Value &in js)
 		{
 			m_accountId = js["account_id"];
@@ -16,6 +20,10 @@ namespace API
 	{
 		string m_matchStatus;
 		LiveRankingParticipant@[] m_participants;
+
+		LiveRanking()
+		{
+		}
 
 		LiveRanking(const Json::Value &in js)
 		{

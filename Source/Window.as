@@ -4,6 +4,7 @@ class Window
 
 	bool m_refreshing = false;
 	int m_refreshTime = 10;
+	bool m_reloadData = true;
 
 	string m_compName;
 	bool m_compFinished = false;
@@ -193,11 +194,21 @@ class Window
 			yield();
 		}
 
-		Data::LoadAsync();
-
 		m_refreshTime = 0;
 
 		while (true) {
+			if (m_reloadData) {
+				m_reloadData = false;
+
+				Data::LoadAsync();
+
+				g_apiData.Clear();
+				Clear();
+				Refresh();
+
+				m_refreshing = false;
+			}
+
 			if (m_refreshTime > 0) {
 				m_refreshTime--;
 			}
@@ -250,6 +261,12 @@ class Window
 		m_refreshTime = 0;
 	}
 
+	void ReloadData()
+	{
+		m_reloadData = true;
+		m_refreshing = true;
+	}
+
 	void Render()
 	{
 		if (!Setting_Visible) {
@@ -262,12 +279,37 @@ class Window
 		}
 
 		UI::SetNextWindowSize(800, 370);
-		if (UI::Begin(title + "###TMGL Match Viewer", Setting_Visible)) {
+		if (UI::Begin(title + "###TMGL Match Viewer", Setting_Visible, UI::WindowFlags::NoCollapse | UI::WindowFlags::MenuBar)) {
+			if (UI::BeginMenuBar()) {
+				if (UI::BeginMenu(Icons::User + " Controls")) {
+					if (UI::MenuItem(Icons::Refresh + " Refresh all", "", false, !m_refreshing)) {
+						ReloadData();
+					}
+
+					if (UI::MenuItem(Icons::Refresh + " Refresh", "", false, !m_refreshing)) {
+						Refresh();
+					}
+
+					UI::Separator();
+
+					if (UI::MenuItem(Icons::ArrowLeft + " Last round", "", false, Data::Competition::Active && m_roundIndex > 0)) {
+						startnew(CoroutineFunc(this.PrevRoundAsync));
+					}
+
+					if (UI::MenuItem(Icons::ArrowRight + " Next round", "", false, Data::Competition::Active && m_roundFinished && !m_compFinished)) {
+						startnew(CoroutineFunc(this.NextRoundAsync));
+					}
+
+					UI::EndMenu();
+				}
+				UI::EndMenuBar();
+			}
+
 			if (m_error != "") {
 				UI::Text("\\$f66" + Icons::TimesCircle + " \\$faa" + m_error);
 			}
 
-			if (!Data::Competition::Active) {
+			if (!m_refreshing && !Data::Competition::Active) {
 				RenderInactive();
 			} else if (m_compName == "") {
 				RenderWaiting();
@@ -305,13 +347,6 @@ class Window
 
 		if (m_refreshing) {
 			UI::BeginDisabled();
-		}
-
-		if (m_roundIndex > 0) {
-			if (UI::RedButton(Icons::ArrowLeft + " Last round")) {
-				startnew(CoroutineFunc(this.PrevRoundAsync));
-			}
-			UI::SameLine();
 		}
 
 		if (m_roundFinished && !m_compFinished) {

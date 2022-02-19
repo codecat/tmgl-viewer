@@ -193,6 +193,8 @@ class Window
 			yield();
 		}
 
+		Data::LoadAsync();
+
 		m_refreshTime = 0;
 
 		while (true) {
@@ -200,7 +202,7 @@ class Window
 				m_refreshTime--;
 			}
 
-			if (Setting_Visible && !m_compFinished && m_refreshTime <= 0) {
+			if (Setting_Visible && !m_compFinished && m_refreshTime <= 0 && Data::Competition::Active) {
 				if (Setting_Verbose) {
 					trace("Refreshing data..");
 				}
@@ -255,7 +257,6 @@ class Window
 		}
 
 		string title = "\\$e61" + Icons::Trophy + "\\$z TMGL Match Viewer";
-		title += " \\$e61(BETA)";
 		if (m_compName != "") {
 			title += "\\$666 - " + m_compName;
 		}
@@ -266,13 +267,25 @@ class Window
 				UI::Text("\\$f66" + Icons::TimesCircle + " \\$faa" + m_error);
 			}
 
-			if (m_compName == "") {
+			if (!Data::Competition::Active) {
+				RenderInactive();
+			} else if (m_compName == "") {
 				RenderWaiting();
 			} else {
 				RenderContents();
 			}
 		}
 		UI::End();
+	}
+
+	void RenderInactive()
+	{
+		UI::Text("There is currently no active competition.");
+
+		if (Data::Competition::Notice != "") {
+			UI::Separator();
+			UI::TextWrapped(Data::Competition::Notice);
+		}
 	}
 
 	void RenderWaiting()

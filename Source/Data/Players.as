@@ -28,16 +28,18 @@ namespace Data
 	{
 		dictionary g_items;
 
-		void Load()
+		void LoadAsync()
 		{
+			auto req = Net::HttpGet("https://openplanet.dev/plugin/tmglviewer/config/players");
+			while (!req.Finished()) {
+				yield();
+			}
+			//TODO: Error checking
+			auto jsPlayers = Json::Parse(req.String());
+
 			g_items.DeleteAll();
 
-			//TODO: New Json::FromFile is only available in unreleased Openplanet update
-			auto filePlayers = IO::FileSource("Data/Players.json");
-			auto jsPlayers = Json::Parse(filePlayers.ReadToEnd());
-			//auto jsPlayers = Json::FromFile("Data/Players.json");
 			auto playerIds = jsPlayers.GetKeys();
-
 			for (uint i = 0; i < playerIds.Length; i++) {
 				string playerId = playerIds[i];
 				g_items.Set(playerId, @Player(playerId, jsPlayers[playerId]));

@@ -5,7 +5,6 @@ APIData@ g_apiData;
 Window@ g_window;
 
 string g_currentAccountId;
-bool g_canJoinServers = false;
 IAPI@ g_api;
 
 Audio::Sample@ g_soundMatch;
@@ -49,25 +48,6 @@ void Main()
 	@g_fontHeader20 = Resources::GetFont("Fonts/Montserrat-Bold.ttf", 20, -1, -1, true);
 
 	@g_soundMatch = Resources::GetAudioSample("Audio/Match.wav");
-
-	Data::Load();
-
-	if (Data::Player::FromID(g_currentAccountId) !is null) {
-		warn("Current user is a TMGL player.");
-		g_canJoinServers = true;
-	}
-
-	auto streamerPlayer = Data::Player::FromStreamerID(g_currentAccountId);
-	if (streamerPlayer !is null) {
-		warn("Current user is a streamer for " + streamerPlayer.m_nickname + ".");
-		g_canJoinServers = true;
-	}
-
-	auto streamerGlobal = Data::Streamer::GlobalFromPlayerID(g_currentAccountId);
-	if (streamerGlobal !is null) {
-		warn("Current user is a global streamer.");
-		g_canJoinServers = true;
-	}
 
 	//@g_api = MockAPI();
 	@g_api = ProdAPI();

@@ -45,15 +45,17 @@ namespace Data
 			return null;
 		}
 
-		void Load()
+		void LoadAsync()
 		{
+			auto req = Net::HttpGet("https://openplanet.dev/plugin/tmglviewer/config/streamers");
+			while (!req.Finished()) {
+				yield();
+			}
+			//TODO: Error checking
+			auto jsStreamers = Json::Parse(req.String());
+
 			Global.RemoveRange(0, Global.Length);
 			g_items.DeleteAll();
-
-			//TODO: New Json::FromFile is only available in unreleased Openplanet update
-			auto fileStreamers = IO::FileSource("Data/Streamers.json");
-			auto jsStreamers = Json::Parse(fileStreamers.ReadToEnd());
-			//auto jsStreamers = Json::FromFile("Data/Streamers.json");
 
 			auto jsGlobal = jsStreamers["global"];
 			for (uint i = 0; i < jsGlobal.Length; i++) {

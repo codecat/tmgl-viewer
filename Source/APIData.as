@@ -75,7 +75,7 @@ class APIData
 			}
 
 			// Refresh match info if servers aren't loaded yet
-			if (g_canJoinServers) {
+			if (Data::CanJoinServers) {
 				bool hasAllServers = true;
 				for (uint i = 0; i < m_matches.Length; i++) {
 					auto match = m_matches[i];
@@ -108,9 +108,9 @@ class APIData
 	{
 		Clear();
 
-		@m_competition = g_api.GetCompetitionAsync(Setting_CompetitionId);
+		@m_competition = g_api.GetCompetitionAsync(Data::Competition::ID);
 		if (m_competition is null) {
-			error("Competition with ID " + Setting_CompetitionId + " not found.");
+			error("Competition with ID " + Data::Competition::ID + " not found.");
 			return;
 		}
 

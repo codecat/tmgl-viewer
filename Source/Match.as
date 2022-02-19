@@ -64,7 +64,7 @@ class Match
 		}
 
 		// Join button
-		if (g_canJoinServers && m_joinLink != "") {
+		if (Data::CanJoinServers && m_joinLink != "") {
 			if (UI::Button(Icons::PlayCircleO + " Join server", vec2(columnWidth, 0))) {
 				auto app = cast<CGameManiaPlanet>(GetApp());
 				app.ManiaPlanetScriptAPI.OpenLink(m_joinLink, CGameManiaPlanetScriptAPI::ELinkType::ManialinkBrowser);
@@ -72,7 +72,7 @@ class Match
 		}
 
 		// Stream button
-		if (!g_canJoinServers) {
+		if (!Data::CanJoinServers) {
 			for (uint i = 0; i < m_streamers.Length; i++) {
 				m_streamers[i].Render(true);
 			}

@@ -15,7 +15,9 @@ namespace Data
 			//TODO: Error checking
 			auto jsCompetition = Json::Parse(req.String());
 
-			if (jsCompetition.HasKey("active")) {
+			if (Setting_ForceActiveCompetition) {
+				Active = true;
+			} else if (jsCompetition.HasKey("active")) {
 				Active = jsCompetition["active"];
 			} else {
 				Active = false;

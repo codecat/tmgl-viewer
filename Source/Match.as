@@ -10,7 +10,7 @@ MatchStatus MatchStatusFromString(const string &in status)
 {
 	if (status == "PENDING") {
 		return MatchStatus::Pending;
-	} else if (status == "RUNNING") {
+	} else if (status == "ONGOING") {
 		return MatchStatus::Running;
 	} else if (status == "COMPLETED") {
 		return MatchStatus::Completed;

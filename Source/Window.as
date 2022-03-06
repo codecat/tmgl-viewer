@@ -2,6 +2,8 @@ class Window
 {
 	string m_error;
 
+	uint64 m_lastFullReload = 0;
+
 	bool m_refreshing = false;
 	int m_refreshTime = 10;
 	bool m_reloadData = true;
@@ -199,6 +201,7 @@ class Window
 		while (true) {
 			if (m_reloadData) {
 				m_reloadData = false;
+				m_lastFullReload = Time::Now;
 
 				Data::LoadAsync();
 
@@ -263,6 +266,7 @@ class Window
 
 	void ReloadData()
 	{
+		m_lastFullReload = Time::Now;
 		m_reloadData = true;
 		m_refreshing = true;
 	}
@@ -327,6 +331,10 @@ class Window
 		if (Data::Competition::Notice != "") {
 			UI::Separator();
 			UI::TextWrapped(Data::Competition::Notice);
+		}
+
+		if (Time::Now - m_lastFullReload > 2000 && UI::Button(Icons::Refresh + " Refresh")) {
+			ReloadData();
 		}
 	}
 

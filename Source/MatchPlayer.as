@@ -30,7 +30,9 @@ class MatchPlayer
 			UI::SameLine();
 
 			string scoreText;
-			if (m_score == 2) {
+			if (m_score == 0) {
+				scoreText = "\\$777-";
+			} else if (m_score == 2) {
 				scoreText = "\\$f77F";
 			} else if (m_score >= 3) {
 				scoreText = "\\$7f7W";

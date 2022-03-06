@@ -29,11 +29,13 @@ class MatchPlayer
 		if (!ended) {
 			UI::SameLine();
 
-			string scoreText = tostring(m_score);
+			string scoreText;
 			if (m_score == 2) {
 				scoreText = "\\$f77F";
 			} else if (m_score >= 3) {
 				scoreText = "\\$7f7W";
+			} else if (m_score > 0) {
+				scoreText = tostring(m_score);
 			}
 
 			vec2 cursorPos = UI::GetCursorPos();

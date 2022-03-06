@@ -39,10 +39,10 @@ namespace API
 				m_status = jsStatus;
 			}
 
-			auto jsGameSettings = js["game_settings"];
-			auto jsMaps = jsGameSettings["maps"];
+			auto jsServerConfig = js["server_config"];
+			auto jsMaps = jsServerConfig["maps"];
 			for (uint i = 0; i < jsMaps.Length; i++) {
-				m_mapUids.InsertLast(jsMaps[i]["ident"]);
+				m_mapUids.InsertLast(jsMaps[i]);
 			}
 		}
 	}

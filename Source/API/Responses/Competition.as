@@ -9,7 +9,7 @@ namespace API
 		Competition(const Json::Value &in js)
 		{
 			m_id = js["id"];
-			m_liveId = js["live_id"];
+			m_liveId = js["liveId"];
 			m_name = js["name"];
 		}
 	}

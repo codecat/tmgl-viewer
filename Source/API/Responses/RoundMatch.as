@@ -11,8 +11,8 @@ namespace API
 		{
 			m_id = js["id"];
 			m_name = js["name"];
-			m_liveId = js["club_match_live_id"];
-			m_completed = js["is_completed"];
+			m_liveId = js["clubMatchLiveId"];
+			m_completed = js["isCompleted"];
 		}
 	}
 }

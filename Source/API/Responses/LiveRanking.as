@@ -11,7 +11,7 @@ namespace API
 
 		LiveRankingParticipant(const Json::Value &in js)
 		{
-			m_accountId = js["account_id"];
+			m_accountId = js["accountId"];
 			m_score = js["score"];
 		}
 	}
@@ -27,7 +27,7 @@ namespace API
 
 		LiveRanking(const Json::Value &in js)
 		{
-			auto jsMatchStatus = js["match_status"];
+			auto jsMatchStatus = js["matchStatus"];
 			if (jsMatchStatus.GetType() == Json::Type::String) {
 				m_matchStatus = jsMatchStatus;
 			}

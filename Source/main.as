@@ -42,6 +42,11 @@ void Main()
 		yield();
 	}
 
+	// Something stupid in Nadeo's new authentication.. not sure what's up, but this waits for proper auth
+	while (currentManiaApp.LocalUser.WebServicesUserId == currentManiaApp.LocalUser.Login) {
+		yield();
+	}
+
 	g_currentAccountId = currentManiaApp.LocalUser.WebServicesUserId;
 
 	@g_fontHeader26 = Resources::GetFont("Fonts/Montserrat-Bold.ttf", 26);

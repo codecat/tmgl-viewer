@@ -1,5 +1,5 @@
-Resources::Font@ g_fontHeader26;
-Resources::Font@ g_fontHeader20;
+UI::Font@ g_fontHeader26;
+UI::Font@ g_fontHeader20;
 
 APIData@ g_apiData;
 Window@ g_window;
@@ -49,10 +49,10 @@ void Main()
 
 	g_currentAccountId = currentManiaApp.LocalUser.WebServicesUserId;
 
-	@g_fontHeader26 = Resources::GetFont("Fonts/Montserrat-Bold.ttf", 26);
-	@g_fontHeader20 = Resources::GetFont("Fonts/Montserrat-Bold.ttf", 20, -1, -1, true);
+	@g_fontHeader26 = UI::LoadFont("Fonts/Montserrat-Bold.ttf", 26);
+	@g_fontHeader20 = UI::LoadFont("Fonts/Montserrat-Bold.ttf", 20, -1, -1, true);
 
-	@g_soundMatch = Resources::GetAudioSample("Audio/Match.wav");
+	@g_soundMatch = Audio::LoadSample("Audio/Match.wav");
 
 	//@g_api = MockAPI();
 	@g_api = ProdAPI();

@@ -2,7 +2,7 @@
 name = "TMGL Match Viewer"
 author = "Miss"
 category = "TMGL"
-version = "0.5.4"
+version = "0.5.5"
 
 [script]
 dependencies = [ "NadeoServices" ]
